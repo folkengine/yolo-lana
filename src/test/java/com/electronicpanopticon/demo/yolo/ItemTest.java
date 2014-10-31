@@ -82,7 +82,7 @@ public class ItemTest {
   }
 
   @Test
-  public void getEarliestDiscount() {
+  public void getEarliestDiscountThatApplies() {
     Money cost = Money.parse("USD 2.00");
     Money list = Money.parse("USD 4.00");
     Item item =
@@ -90,12 +90,12 @@ public class ItemTest {
             LocalDate.now().minusDays(200)));
     assertTrue(item.isRetailPriceStable());
     item.addDiscount(new Discount(DiscountPercent.TWENTY, LocalDate.now()));
-    Optional<Discount> discount = item.getEarliestDiscount(LocalDate.now());
+    Optional<Discount> discount = item.getEarliestDiscountThatApplies();
     assertTrue(discount.isPresent());
     assertEquals(LocalDate.now(), discount.get().getStartDate());
 
     // Now rewind one day
-    discount = item.getEarliestDiscount(LocalDate.now().minusDays(1));
+    discount = item.getEarliestDiscountThatApplies(LocalDate.now().minusDays(1));
     assertFalse(discount.isPresent());
   }
 
@@ -139,18 +139,34 @@ public class ItemTest {
     Money cost = Money.parse("USD 2.00");
     Money list = Money.parse("USD 4.00");
     Item item =
-        new Item("test2", "isRedPencil_20percent32Days", cost, new RetailPrice(list,
-            LocalDate.now().minusDays(200)));
+        new Item("test2", "isRedPencil_20percent32Days", cost, new RetailPrice(list, LocalDate
+            .now().minusDays(200)));
     assertTrue(item.isRetailPriceStable());
     item.addDiscount(new Discount(DiscountPercent.TWENTY, LocalDate.now()));
+    Optional<Discount> discount = item.getEarliestDiscountThatApplies();
+    assertTrue(discount.isPresent());
+    assertEquals(1, item.getDiscounts().size());
+    assertEquals(1, item.determineDiscountsThatApply().size());
     assertTrue(item.isRetailPriceStable());
+    assertTrue(item.isRedPencil());
+
     // So far everything is fine
 
     // Now let's add an expired discount within the window.
-    item.addDiscount(new Discount(DiscountPercent.FIVE, LocalDate.now().minusDays(20), LocalDate.now().minusDays(15)));
+    item.addDiscount(new Discount(DiscountPercent.FIVE, LocalDate.now().minusDays(20), LocalDate
+        .now().minusDays(15)));
     LOG.debug(item.toString());
-    // TODO Fix me
-    // assertFalse(item.isRetailPriceStable());
+
+    discount = item.getEarliestDiscountThatApplies();
+    assertTrue(discount.isPresent());
+    assertEquals(2, item.getDiscounts().size());
+    assertEquals(1, item.determineDiscountsThatApply().size());
+
+    assertFalse(item.isRedPencil());
+    assertTrue(item.hasAPreviousDiscountWithinRedPencilWindow());
+
+    assertTrue(item.isRetailPriceStable());
+
   }
 
 
