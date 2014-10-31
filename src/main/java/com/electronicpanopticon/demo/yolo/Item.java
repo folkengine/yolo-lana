@@ -228,11 +228,11 @@ public class Item implements Serializable {
   }
 
 
-  public final Optional<Discount> getEarliestDiscount() {
-    return this.getEarliestDiscount(LocalDate.now());
+  public final Optional<Discount> getEarliestDiscountThatApplies() {
+    return this.getEarliestDiscountThatApplies(LocalDate.now());
   }
 
-  public final Optional<Discount> getEarliestDiscount(final LocalDate asOf) {
+  public final Optional<Discount> getEarliestDiscountThatApplies(final LocalDate asOf) {
     List<Discount> discounts = this.determineDiscountsThatApply(asOf);
     if (discounts.size() < 1) {
       return Optional.empty();
@@ -247,7 +247,7 @@ public class Item implements Serializable {
    * @return
    */
   public final int determineLongestDiscountDaysCount(final LocalDate asOf) {
-    Optional<Discount> discount = this.getEarliestDiscount(asOf);
+    Optional<Discount> discount = this.getEarliestDiscountThatApplies(asOf);
     if (!discount.isPresent()) {
       return -1;
     }
@@ -307,7 +307,7 @@ public class Item implements Serializable {
   }
 
   public final boolean hasAPreviousDiscountWithinRedPencilWindow(final LocalDate asOf) {
-    Optional<Discount> discountOption = this.getEarliestDiscount(asOf);
+    Optional<Discount> discountOption = this.getEarliestDiscountThatApplies(asOf);
     if (!discountOption.isPresent()) {
       return false;
     }
@@ -341,7 +341,7 @@ public class Item implements Serializable {
   }
 
   public final boolean isRetailPriceStable(final LocalDate asOf) {
-    Optional<Discount> discount = this.getEarliestDiscount(asOf);
+    Optional<Discount> discount = this.getEarliestDiscountThatApplies(asOf);
     int stability;
     if (!discount.isPresent()) {
       // No Discount is present, so we apply the test based upon how many days since the RetailPrice
