@@ -48,19 +48,19 @@ public class ItemTest {
     assertEquals(cost, item.getCost());
     assertEquals(list, item.determineCurrentRetailPrice().getMoney());
 
-    LOG.debug("Now Current List Price: " + item.determineCurrentRetailPrice());
+    LOG.debug("Now Current List Price: " + item.determineCurrentRetailPrice().getMoney());
     LOG.debug("Now Discount Price: " + item.applyDiscounts(LocalDate.now()));
 
-    LOG.debug("2 Day Current List Price: " + item.determineCurrentRetailPrice(LocalDate.now().plusDays(2)));
+    LOG.debug("2 Day Current List Price: " + item.determineCurrentRetailPrice(LocalDate.now().plusDays(2)).getMoney());
     LOG.debug("2 Day Discount Price: " + item.applyDiscounts(LocalDate.now().plusDays(2)));
 
-    LOG.debug("3 Day Current List Price: " + item.determineCurrentRetailPrice(LocalDate.now().plusDays(3)));
+    LOG.debug("3 Day Current List Price: " + item.determineCurrentRetailPrice(LocalDate.now().plusDays(3)).getMoney());
     LOG.debug("3 Day Discount Price: " + item.applyDiscounts(LocalDate.now().plusDays(3)));
     LOG.debug("3 Day Cumulative Discount: " + item.determineCumulativeDiscount(LocalDate.now().plusDays(3)));
     // XXX This could be less brittle
     assertEquals(24, item.determineCumulativeDiscount(LocalDate.now().plusDays(3)));
 
-    LOG.debug("10 Day Current List Price: " + item.determineCurrentRetailPrice(LocalDate.now().plusDays(10)));
+    LOG.debug("10 Day Current List Price: " + item.determineCurrentRetailPrice(LocalDate.now().plusDays(10)).getMoney());
     LOG.debug("10 Day Discount Price: " + item.applyDiscounts(LocalDate.now().plusDays(10)));
     assertEquals(item.determineCurrentRetailPrice(), item.determineCurrentRetailPrice(LocalDate.now().plusDays(10)));
 
