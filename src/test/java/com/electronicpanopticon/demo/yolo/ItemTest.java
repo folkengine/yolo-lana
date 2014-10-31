@@ -95,5 +95,25 @@ public class ItemTest {
     assertFalse(item.isRetailPriceStable());
   }
 
+  @Test
+  public void isRedPencil_20percent32Days() {
+    Money cost = Money.parse("USD 2.00");
+    Money list = Money.parse("USD 4.00");
+    Item item =
+        new Item("test2", "isRedPencil_20percent32Days", cost, new RetailPrice(list,
+            LocalDate.now().minusDays(31)));
+    item.addDiscount(new Discount(DiscountPercent.TWENTY, LocalDate.now()));
+    assertTrue(item.isRetailPriceStable());
+    assertTrue(item.isRedPencil());
+    assertTrue(item.isRedPencil(LocalDate.now().plusDays(20)));
+    assertFalse(item.isRedPencil(LocalDate.now().plusDays(40)));
+
+    // Now add a discount that after 10 days puts it over the 30% threshold.
+    item.addDiscount(new Discount(DiscountPercent.FIFTEEN, LocalDate.now().plusDays(10)));
+    assertTrue(item.isRedPencil());
+    assertFalse(item.isRedPencil(LocalDate.now().plusDays(20)));
+    assertFalse(item.isRedPencil(LocalDate.now().plusDays(40)));
+  }
+
 
 }

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 
@@ -312,19 +313,27 @@ public class Item implements Serializable {
     }
     Discount discount = discountOption.get();
 
-    // Filter so that we only get a Discount that expires before the current discount window starts.
-    Discount expired =
-        this.getDiscounts().stream().filter(d -> d.getEndDate() != null)
-        .filter(d -> d.getEndDate().isBefore(discount.getStartDate()))
-        .sorted(comparing(Discount::getEndDate)).reduce((previous, current) -> current).get();
+    /**
+     * TODO RF: Hack :-P
+     */
+    try {
+      // Filter so that we only get a Discount that expires before the current discount window starts.
+      Discount expired =
+          this.getDiscounts().stream().filter(d -> d.getEndDate() != null)
+          .filter(d -> d.getEndDate().isBefore(discount.getStartDate()))
+          .sorted(comparing(Discount::getEndDate)).reduce((previous, current) -> current).get();
 
-    if (expired == null) {
+      if (expired == null) {
+        return false;
+      }
+      int between = (int) ChronoUnit.DAYS.between(expired.getEndDate(), discount.getStartDate());
+
+      return (between <= RED_PENCIL_DAYS_WINDOW);
+    } catch (NoSuchElementException e) {
       return false;
     }
 
-    int between = (int) ChronoUnit.DAYS.between(expired.getEndDate(), discount.getStartDate());
 
-    return (between <= RED_PENCIL_DAYS_WINDOW);
   }
 
   public final boolean isRetailPriceStable() {
@@ -380,6 +389,7 @@ public class Item implements Serializable {
 
     return true;
   }
+
 
 
 
