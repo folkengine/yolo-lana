@@ -178,6 +178,16 @@ public class Item implements Serializable {
         .sorted(comparing(Discount::getStartDate)).collect(toList());
   }
 
+  public final Money applyDiscounts() {
+    return this.applyDiscounts(LocalDate.now());
+  }
+
+  /**
+   * TODO RF: For Loop :-P
+   *
+   * @param asOf
+   * @return
+   */
   public final Money applyDiscounts(final LocalDate asOf) {
     Money amount = this.determineCurrentRetailPrice(asOf).getMoney();
     if (this.getDiscounts().size() < 1) {
@@ -187,6 +197,10 @@ public class Item implements Serializable {
       amount = discount.apply(amount);
     }
     return amount;
+  }
+
+  public final int determineCumulativeDiscount() {
+    return this.determineCumulativeDiscount(LocalDate.now());
   }
 
   /**
@@ -271,6 +285,10 @@ public class Item implements Serializable {
     }
     return discounts.stream().filter(d -> d.getEndDate() != null)
         .anyMatch(d -> d.getEndDate().isBefore(asOf));
+  }
+
+  public final boolean isGreaterThanMaxRedPencilDiscount() {
+    return this.isGreaterThanMaxRedPencilDiscount(LocalDate.now());
   }
 
   public final boolean isGreaterThanMaxRedPencilDiscount(final LocalDate asOf) {
