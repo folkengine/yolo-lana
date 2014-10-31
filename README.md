@@ -1,7 +1,10 @@
 yolo-lana
 =========
 
-Stuff with Java8
+Fun with Java 8 streams, filters, and Java Time.
+
+Creates a basic Item class that has the capacity to store discounts and calculate "Red Line" special
+discounts based upon the duraction, direction and size of cumulative discounts.
 
 Maven Notes
 -----------

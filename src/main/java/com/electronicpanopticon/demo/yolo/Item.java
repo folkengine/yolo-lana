@@ -20,6 +20,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * This is the main class for the exercise. An Item is something with a RetailPrice and an optional
+ * collection of discounts.
+ *
+ * TODO RF: Moving Calculations out of the Domain Class for better seperation of concerns.
+ * TODO RF: Creating Jackson custom deserializers for Joda Money and Java 8 LocalDate to simplify
+ * faking.
  *
  * @author Chris Baker <ignatz@gmail.com>
  */
