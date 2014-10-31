@@ -390,8 +390,24 @@ public class Item implements Serializable {
     return true;
   }
 
+  @Override
+  public String toString() {
+    StringBuffer buffie = new StringBuffer();
 
+    buffie.append("Item: {sku: " + this.getSku() + ", name: " + this.getName() + ", RetailPrice: "
+        + this.determineCurrentRetailPrice().getMoney() + "}");
 
+    if (this.isRedPencil()) {
+      buffie.append(" RED PENCIL!!!");
+    }
+
+    for (Discount discount : this.getDiscounts().stream().sorted(comparing(Discount::getStartDate))
+        .collect(toList())) {
+      buffie.append("\n\tDiscount: " + discount);
+    }
+
+    return buffie.toString();
+  }
 
   public static void main(String... args) {
 
